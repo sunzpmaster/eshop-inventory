@@ -1,11 +1,10 @@
 package com.eshop.inventory.eshopinventory.service.impl;
 
-import com.eshop.inventory.eshopinventory.dao.RedisDAO;
+import com.alibaba.fastjson.JSONObject;
 import com.eshop.inventory.eshopinventory.entity.User;
 import com.eshop.inventory.eshopinventory.mapper.TestMapper;
+import com.eshop.inventory.eshopinventory.service.RedisService;
 import com.eshop.inventory.eshopinventory.service.UserService;
-
-import com.alibaba.fastjson.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -18,7 +17,7 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private TestMapper testMapper;
     @Autowired
-    private RedisDAO redisDAO;
+    private RedisService redisService;
 
     @Override
     public List<User> getUserInfo() {
@@ -27,8 +26,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User getCachedUserInfo() {
-        redisDAO.set("cached_user", "{\"name\": \"zhangsan\", \"age\": 25}") ;
-        String json = redisDAO.get("cached_user");
+        redisService.set("cached_user", "{\"name\": \"zhangsan\", \"age\": 25}") ;
+        String json = redisService.get("cached_user").toString();
         JSONObject jsonObject = JSONObject.parseObject(json);
 
         User user = new User();
