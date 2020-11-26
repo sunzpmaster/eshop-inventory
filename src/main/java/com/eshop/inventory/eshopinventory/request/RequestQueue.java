@@ -8,4 +8,5 @@ package com.eshop.inventory.eshopinventory.request;
 public interface RequestQueue {
     void process();
     Long getProductId();
+    boolean isForceRefresh();
 }

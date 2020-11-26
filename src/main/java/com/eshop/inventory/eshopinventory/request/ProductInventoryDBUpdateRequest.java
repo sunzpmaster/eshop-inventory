@@ -41,4 +41,9 @@ public class ProductInventoryDBUpdateRequest  implements RequestQueue {
     public Long getProductId() {
         return productInventory.getProductId();
     }
+
+    @Override
+    public boolean isForceRefresh() {
+        return false;
+    }
 }

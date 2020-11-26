@@ -4,9 +4,14 @@ import com.eshop.inventory.eshopinventory.entity.ProductInventory;
 import com.eshop.inventory.eshopinventory.mapper.ProductInventoryMapper;
 import com.eshop.inventory.eshopinventory.service.ProductInventoryService;
 import com.eshop.inventory.eshopinventory.service.RedisService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+/**
+ * 商品库存实现
+ */
+@Slf4j
 @Service
 public class ProductInventoryServiceImpl implements ProductInventoryService {
 
@@ -17,6 +22,7 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
     @Override
     public void updateProductInventory(ProductInventory productInventory) {
         productInventoryMapper.updateProductInventory(productInventory);
+        log.info("========: 已修改数据库中的库存，商品id:{}, 商品库存数量:{}", productInventory.getProductId(), productInventory.getInventoryCnt());
     }
 
     /**
@@ -33,6 +39,7 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
     public void removeProductInventoryCache(ProductInventory productInventory) {
         String key = "product:inventory:" + productInventory.getProductId();
         redisService.del(key);
+        log.info("===========: 已删除redis中的缓存，key={}", key);
     }
 
     /**
@@ -43,6 +50,7 @@ public class ProductInventoryServiceImpl implements ProductInventoryService {
     public void setProductInventoryCache(ProductInventory productInventory) {
         String key = "product:inventory:" + productInventory.getProductId();
         redisService.set(key, String.valueOf(productInventory.getInventoryCnt()));
+        log.info("===========已更新商品库存的缓存，商品id={}, 商品库存数量={}, key={}",productInventory.getProductId(), productInventory.getInventoryCnt(),key);
     }
 
     /**

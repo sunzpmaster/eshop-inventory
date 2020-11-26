@@ -2,7 +2,9 @@ package com.eshop.inventory.eshopinventory.request;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 请求内存队列list
@@ -15,6 +17,11 @@ public class RequestQueueList {
      * 内存队列
      */
     private List<ArrayBlockingQueue<RequestQueue>> queues = new ArrayList<ArrayBlockingQueue<RequestQueue>>();
+    /**
+     * 标识位map
+     */
+    private Map<Long, Boolean> flagMap = new ConcurrentHashMap<Long, Boolean>();
+
 
     /**
      * 单例有很多种方式去实现：我采取绝对线程安全的一种方式
@@ -74,4 +81,8 @@ public class RequestQueueList {
         return queues.get(index);
     }
 
+
+    public Map<Long, Boolean> getFlagMap() {
+        return flagMap;
+    }
 }

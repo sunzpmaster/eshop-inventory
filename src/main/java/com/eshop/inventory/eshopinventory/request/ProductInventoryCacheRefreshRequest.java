@@ -13,10 +13,15 @@ public class ProductInventoryCacheRefreshRequest  implements RequestQueue {
      * 商品库存Service
      */
     private ProductInventoryService productInventoryService;
+    /**
+     * 是否强制刷新缓存
+     */
+    private boolean forceRefresh;
 
-    public ProductInventoryCacheRefreshRequest(Long productId, ProductInventoryService productInventoryService) {
+    public ProductInventoryCacheRefreshRequest(Long productId, ProductInventoryService productInventoryService, boolean forceRefresh) {
         this.productId = productId;
         this.productInventoryService = productInventoryService;
+        this.forceRefresh =forceRefresh;
     }
 
     @Override
@@ -30,5 +35,9 @@ public class ProductInventoryCacheRefreshRequest  implements RequestQueue {
     @Override
     public Long getProductId() {
         return productId;
+    }
+
+    public boolean isForceRefresh() {
+        return forceRefresh;
     }
 }
