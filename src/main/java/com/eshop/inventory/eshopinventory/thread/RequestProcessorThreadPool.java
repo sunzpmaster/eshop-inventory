@@ -4,8 +4,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.eshop.inventory.eshopinventory.request.Request;
 import com.eshop.inventory.eshopinventory.request.RequestQueue;
+import com.eshop.inventory.eshopinventory.request.RequestQueueList;
 import lombok.extern.slf4j.Slf4j;
 
 
@@ -26,12 +26,12 @@ public class RequestProcessorThreadPool {
 
     //初始化一个内存队列list，生成容量为100个Request对象的队列10次，依次往list添加，分别用10个线程监控
     public RequestProcessorThreadPool() {
-        RequestQueue requestQueue = RequestQueue.getInstance();
+        RequestQueueList requestQueueList = RequestQueueList.getInstance();
 
         for(int i = 0; i < 10; i++) {
             log.info("线程初始化开始，提交第{}个线程任务",i);
-            ArrayBlockingQueue<Request> queue = new ArrayBlockingQueue<Request>(100);
-            requestQueue.addQueue(queue);
+            ArrayBlockingQueue<RequestQueue> queue = new ArrayBlockingQueue<RequestQueue>(100);
+            requestQueueList.addQueue(queue);
             threadPool.submit(new RequestProcessorThread(queue));
         }
     }
