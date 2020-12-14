@@ -178,4 +178,8 @@ public interface RedisService {
      * 从List结构中移除属性
      */
     Long lRemove(String key, long count, Object value);
+
+     boolean insertList(String key, String val) ;
+
+    List<Object> consume(String key) ;
 }

@@ -4,7 +4,9 @@ import com.eshop.inventory.eshopinventory.service.RedisService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
+import redis.clients.jedis.Jedis;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -16,6 +18,12 @@ import java.util.concurrent.TimeUnit;
  */
 @Service
 public class RedisServiceImpl implements RedisService {
+
+    /**
+     * 消息池前缀，以此前缀加上传递的消息id作为key，以消息{@link }
+     * 的消息体body作为值存储
+     */
+    private static final String MSG_POOL = "Message:Pool:";
     @Autowired
     private RedisTemplate<String, Object> redisTemplate;
 
@@ -195,5 +203,53 @@ public class RedisServiceImpl implements RedisService {
     @Override
     public Long lRemove(String key, long count, Object value) {
         return redisTemplate.opsForList().remove(key, count, value);
+    }
+
+
+    /**
+     * 添加元素到list（使用右进）
+     * @param key
+     * @param val
+     * @return
+     */
+    @Override
+    public boolean insertList(String key, String val) {
+        if (key == null || val == null) {
+            return false;
+        }
+
+        try {
+
+            redisTemplate.opsForList().rightPush(key, val);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+
+    @Override
+    public List<Object> consume(String key) {
+
+        long count = redisTemplate.opsForList().size(key);
+        if (0 < count) {
+            // 可根据需求做限制
+            List<Object> ids = redisTemplate.opsForList().range(key, 0, count - 1);
+            if (ids != null) {
+                List<Object> result = new ArrayList<>();
+                ids.forEach(l -> result.add(redisTemplate.opsForValue().get(MSG_POOL + l)));
+                for (Object id : ids) {
+                    //count> 0：删除等于从左到右移动的值的第一个元素；
+                    // count< 0：删除等于从右到左移动的值的第一个元素；
+                    // count = 0：删除等于value的所有元素。
+                    redisTemplate.opsForList().remove(key,1, id);
+                }
+
+                return result;
+            } /// if end~
+        }
+
+        return null;
     }
 }
